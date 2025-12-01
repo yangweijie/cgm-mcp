@@ -10,7 +10,7 @@ A **Model Context Protocol (MCP)** server implementation of **CodeFuse-CGM** (Co
 - **Repository-level Code Analysis**: Analyze entire codebases using graph-based representations
 - **Issue Resolution**: Automatically generate code patches to fix bugs and implement features
 - **Four-Stage Pipeline**: Rewriter → Retriever → Reranker → Reader architecture
-- **Multi-LLM Support**: Works with OpenAI, Anthropic, Ollama, LM Studio
+- **Multi-LLM Support**: Works with OpenAI, Anthropic, Ollama, Ollama Cloud, LM Studio
 
 #### 2. **Model-agnostic Tools** (pure analysis, no LLM required) ⭐
 - **Pure Code Analysis**: Extract code structure without LLM dependencies
@@ -25,6 +25,14 @@ A **Model Context Protocol (MCP)** server implementation of **CodeFuse-CGM** (Co
 - **NVIDIA GPU**: Full CUDA support with cuPy integration
 - **AMD GPU**: ROCm (Linux) and DirectML (Windows) support
 - **CPU Fallback**: Automatic fallback ensures universal compatibility
+
+### ☁️ Ollama Cloud Support
+
+#### **Ollama Cloud Provider** 🌐
+- **Cloud-based Ollama Models**: Run Ollama-compatible models in the cloud
+- **API Compatibility**: Compatible with Ollama API format
+- **Easy Configuration**: Works with standard Ollama model names
+- **Secure Access**: Supports API key authentication
 
 #### **Advanced Caching System** 🗄️
 - **Multi-level Caching**: TTL cache (1hr) + LRU cache (500 entries) + AST cache
@@ -270,7 +278,7 @@ export CGM_GPU_MEMORY_FRACTION=0.8        # GPU memory usage limit
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `CGM_LLM_PROVIDER` | LLM provider (openai, anthropic, ollama, lmstudio, mock) | `openai` |
+| `CGM_LLM_PROVIDER` | LLM provider (openai, anthropic, ollama, ollama_cloud, lmstudio, mock) | `openai` |
 | `CGM_LLM_API_KEY` | API key for LLM provider (not needed for local models) | Required for cloud |
 | `CGM_LLM_MODEL` | Model name | `gpt-4` |
 | `CGM_LLM_API_BASE` | Custom API base URL (for local models) | Provider default |

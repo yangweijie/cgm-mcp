@@ -296,6 +296,60 @@ class LMStudioClient(BaseLLMClient):
             return False
 
 
+class OllamaCloudClient(BaseLLMClient):
+    """Ollama Cloud client - compatible with Ollama API format but running on cloud"""
+
+    def __init__(self, config: LLMConfig):
+        super().__init__(config)
+        # Default to Ollama Cloud API endpoint, but allow override
+        self.base_url = config.api_base or "https://ollama.example.com"  # Placeholder - should be replaced with real Ollama Cloud URL
+        self.headers = {
+            "Authorization": f"Bearer {config.api_key}",
+            "Content-Type": "application/json",
+        }
+
+    async def generate(self, prompt: str, **kwargs) -> str:
+        """Generate text using Ollama Cloud API (Ollama-compatible format)"""
+        try:
+            async with httpx.AsyncClient(timeout=self.config.timeout) as client:
+                payload = {
+                    "model": self.config.model or "llama3",  # Default Ollama model
+                    "prompt": prompt,
+                    "stream": False,
+                    "options": {
+                        "temperature": kwargs.get(
+                            "temperature", self.config.temperature
+                        ),
+                        "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
+                    },
+                }
+
+                response = await client.post(
+                    f"{self.base_url}/api/generate", 
+                    headers=self.headers,
+                    json=payload
+                )
+                response.raise_for_status()
+
+                data = response.json()
+                return data["response"]
+
+        except Exception as e:
+            logger.error(f"Ollama Cloud API error: {e}")
+            raise
+
+    async def health_check(self) -> bool:
+        """Check Ollama Cloud API health"""
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                response = await client.get(
+                    f"{self.base_url}/api/tags", headers=self.headers
+                )
+                return response.status_code == 200
+        except:
+            return False
+
+
 class LLMClient:
     """Main LLM client that delegates to specific providers"""
 
@@ -308,6 +362,8 @@ class LLMClient:
             self.client = AnthropicClient(config)
         elif config.provider == "ollama":
             self.client = OllamaClient(config)
+        elif config.provider == "ollama_cloud":
+            self.client = OllamaCloudClient(config)
         elif config.provider == "lmstudio":
             self.client = LMStudioClient(config)
         elif config.provider == "mock":

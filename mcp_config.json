@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cgm-mcp": {
+      "command": "/bin/bash",
+      "args": ["/Volumes/data/git/python/cgm-mcp/mcp_server.sh"],
+      "env": {
+        "CGM_CONFIG_FILE": "/Volumes/data/git/python/cgm-mcp/config.ollama_cloud.json"
+      }
+    }
+  }
+}

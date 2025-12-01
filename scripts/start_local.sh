@@ -96,6 +96,12 @@ if [ -z "$CONFIG_FILE" ]; then
                 MODEL="deepseek-coder:6.7b"
             fi
             ;;
+        ollama_cloud)
+            CONFIG_FILE="config.ollama_cloud.json"
+            if [ -z "$MODEL" ]; then
+                MODEL="llama3"
+            fi
+            ;;
         lmstudio)
             CONFIG_FILE="config.lmstudio.json"
             if [ -z "$MODEL" ]; then
@@ -124,11 +130,20 @@ check_service() {
                 print_error "  ollama serve"
                 exit 1
             fi
-            
+
             # Check if model exists
             if ! ollama list | grep -q "$MODEL"; then
                 print_warning "Model $MODEL not found. Downloading..."
                 ollama pull "$MODEL"
+            fi
+            ;;
+        ollama_cloud)
+            # For Ollama Cloud, we just check if API key is set
+            if [ -z "$CGM_LLM_API_KEY" ] && [ -z "$CGM_CLOUD_API_KEY" ]; then
+                API_KEY=$(grep -E 'api_key' "$CONFIG_FILE" | head -1 | cut -d'"' -f4)
+                if [ -z "$API_KEY" ] || [ "$API_KEY" = "your-ollama-cloud-api-key" ]; then
+                    print_warning "No API key provided for Ollama Cloud. Please set CGM_LLM_API_KEY or update the config file."
+                fi
             fi
             ;;
         lmstudio)

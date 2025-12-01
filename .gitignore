@@ -182,3 +182,5 @@ data/
 .env.production
 secrets.json
 api_keys.txt
+config.ollama_cloud.json
+mcp_config.env
